@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Коммунальные платежи — Панель управления</title>
+
+    <!-- Fonts: DM Sans (UI) + JetBrains Mono (data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ========== Header ========== -->
+    <header class="header">
+        <a href="index.html" class="header__brand">
+            <div class="header__icon">КП</div>
+            <div>
+                <div class="header__title">Коммунальные платежи</div>
+                <div class="header__subtitle">Utility Payments Tracking</div>
+            </div>
+        </a>
+        <nav class="header__nav">
+            <a href="index.html" class="active">Панель</a>
+        </nav>
+    </header>
+
+    <!-- ========== Main Content ========== -->
+    <main class="main">
+
+        <!-- Page title -->
+        <h1 class="page-title">Статус оплаты за текущий месяц</h1>
+        <p class="page-desc">
+            Обзор всех лицевых счетов. Нажмите на строку, чтобы открыть детали.
+        </p>
+
+        <!-- Stats cards (заполняются из JS) -->
+        <div class="stats-bar" id="stats-bar"></div>
+
+        <!-- Action bar -->
+        <div class="filter-bar" id="action-bar" style="justify-content: space-between;">
+            <button class="btn btn--primary" id="btn-create-account">+ Новый лицевой счёт</button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar" id="filter-bar">
+            <span class="filter-bar__label">Статус:</span>
+            <button class="filter-btn active" data-filter="ALL">Все</button>
+            <button class="filter-btn" data-filter="PAID_THIS_MONTH">Оплачено</button>
+            <button class="filter-btn" data-filter="NOT_PAID_THIS_MONTH">Не оплачено</button>
+            <button class="filter-btn" data-filter="OVERDUE">Просрочено</button>
+        </div>
+
+        <!-- Accounts table -->
+        <div class="card">
+            <div class="card__body">
+                <div class="table-wrap">
+                    <table class="table table--clickable">
+                        <thead>
+                            <tr>
+                                <th>Услуга</th>
+                                <th>Номер счёта</th>
+                                <th>Статус</th>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accounts-table-body">
+                            <!-- Заполняется динамически из main.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========== Scripts ========== -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

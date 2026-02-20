@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали лицевого счёта — Коммунальные платежи</title>
+
+    <!-- Fonts: DM Sans (UI) + JetBrains Mono (data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        /* Раскладка секций на странице деталей */
+        .detail-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        @media (max-width: 900px) {
+            .detail-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== Header ========== -->
+    <header class="header">
+        <a href="index.html" class="header__brand">
+            <div class="header__icon">КП</div>
+            <div>
+                <div class="header__title">Коммунальные платежи</div>
+                <div class="header__subtitle">Utility Payments Tracking</div>
+            </div>
+        </a>
+        <nav class="header__nav">
+            <a href="index.html">Панель</a>
+        </nav>
+    </header>
+
+    <!-- ========== Main Content ========== -->
+    <main class="main">
+
+        <!-- Account info (заполняется из JS: breadcrumb, title, info card) -->
+        <div id="account-detail">
+            <!-- Заполняется динамически из account-page.js -->
+        </div>
+
+        <!-- Payments & Readings (side by side on desktop) -->
+        <div class="detail-sections">
+            <div id="payments-section">
+                <!-- Заполняется динамически -->
+            </div>
+            <div id="readings-section">
+                <!-- Заполняется динамически -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========== Scripts ========== -->
+    <script type="module" src="js/account-page.js"></script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 /**
- * ЛицевыеСчетаApi — Управление лицевыми счетами.
+ * LitsevyeSchetaApi — Управление лицевыми счетами.
  * Сгенерирован из @Tag(name = "Лицевые счета") контроллера AccountController.
  */
 import { BaseAPI } from '../runtime.js';
 
-export class ЛицевыеСчетаApi extends BaseAPI {
+export class LitsevyeSchetaApi extends BaseAPI {
 
     /**
      * POST /accounts — Создать лицевой счёт.

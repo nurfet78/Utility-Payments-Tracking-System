@@ -46,8 +46,12 @@ GET  /accounts/{id}                    — получить лицевой сч�
 GET  /accounts/with-status             — все счета со статусом оплаты
 POST /accounts/{id}/payments           — зарегистрировать платёж
 GET  /accounts/{id}/payments           — история платежей
+PUT  /accounts/{id}/payments/{pid}     — редактировать платёж
+DELETE /accounts/{id}/payments/{pid}   — удалить платёж
 POST /accounts/{id}/readings           — передать показание счётчика
 GET  /accounts/{id}/readings           — история показаний
+PUT  /accounts/{id}/readings/{rid}     — редактировать показание
+DELETE /accounts/{id}/readings/{rid}   — удалить показание
 ```
 
 ## Запуск

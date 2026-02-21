@@ -1,10 +1,10 @@
 /**
- * УслугиApi — Справочник коммунальных услуг.
+ * UslugiApi — Справочник коммунальных услуг.
  * Сгенерирован из @Tag(name = "Услуги") контроллера ServiceController.
  */
 import { BaseAPI } from '../runtime.js';
 
-export class УслугиApi extends BaseAPI {
+export class UslugiApi extends BaseAPI {
 
     /**
      * GET /services — Получить список всех услуг.

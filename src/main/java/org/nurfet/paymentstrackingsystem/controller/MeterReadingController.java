@@ -95,4 +95,47 @@ public class MeterReadingController {
             @PathVariable Long accountId) {
         return meterReadingService.getByAccountId(accountId);
     }
+
+    @PutMapping("/{readingId}")
+    @Operation(
+            summary = "Редактировать показание",
+            description = "Обновляет значение и/или дату существующего показания счётчика."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Показание успешно обновлено"),
+            @ApiResponse(responseCode = "400",
+                    description = "Ошибка валидации",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "Лицевой счёт или показание не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public MeterReadingResponse update(
+            @Parameter(description = "ID лицевого счёта", example = "1", required = true)
+            @PathVariable Long accountId,
+            @Parameter(description = "ID показания", example = "1", required = true)
+            @PathVariable Long readingId,
+            @Valid @RequestBody MeterReadingCreateRequest request) {
+        return meterReadingService.update(accountId, readingId, request);
+    }
+
+    @DeleteMapping("/{readingId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Удалить показание",
+            description = "Удаляет показание счётчика по ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Показание удалено"),
+            @ApiResponse(responseCode = "404",
+                    description = "Лицевой счёт или показание не найдено",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public void delete(
+            @Parameter(description = "ID лицевого счёта", example = "1", required = true)
+            @PathVariable Long accountId,
+            @Parameter(description = "ID показания", example = "1", required = true)
+            @PathVariable Long readingId) {
+        meterReadingService.delete(accountId, readingId);
+    }
 }

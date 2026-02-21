@@ -1,5 +1,5 @@
 /**
- * ПлатежиApi — Регистрация и просмотр платежей.
+ * PlatezhiApi — Регистрация и просмотр платежей.
  * Сгенерирован из @Tag(name = "Платежи") контроллера PaymentController.
  *
  * Метод create1 (с суффиксом) — openapi-generator добавляет суффикс
@@ -7,7 +7,7 @@
  */
 import { BaseAPI } from '../runtime.js';
 
-export class ПлатежиApi extends BaseAPI {
+export class PlatezhiApi extends BaseAPI {
 
     /**
      * POST /accounts/{accountId}/payments — Зарегистрировать платёж.
@@ -31,6 +31,27 @@ export class ПлатежиApi extends BaseAPI {
         return this.request(
             `/accounts/${params.accountId}/payments`,
             'GET',
+        );
+    }
+
+    /**
+     * PUT /accounts/{accountId}/payments/{paymentId} — Редактировать платёж.
+     */
+    async update1(params) {
+        return this.request(
+            `/accounts/${params.accountId}/payments/${params.paymentId}`,
+            'PUT',
+            params.paymentCreateRequest,
+        );
+    }
+
+    /**
+     * DELETE /accounts/{accountId}/payments/{paymentId} — Удалить платёж.
+     */
+    async delete1(params) {
+        return this.request(
+            `/accounts/${params.accountId}/payments/${params.paymentId}`,
+            'DELETE',
         );
     }
 }

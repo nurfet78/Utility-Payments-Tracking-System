@@ -822,3 +822,86 @@ body {
 .stagger > *:nth-child(2)  { animation-delay: 50ms; }
 .stagger > *:nth-child(3)  { animation-delay: 100ms; }
 .stagger > *:nth-child(4)  { animation-delay: 150ms; }
+.stagger > *:nth-child(5)  { animation-delay: 200ms; }
+
+/* === Action buttons (edit/delete in tables) === */
+.cell-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.btn--icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition);
+}
+
+.btn--ghost {
+    background: transparent;
+    color: var(--color-text-muted);
+}
+
+.btn--ghost:hover {
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+}
+
+.btn--danger {
+    background: var(--color-overdue);
+    color: white;
+    border: none;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn--danger:hover {
+    background: #b91c1c;
+}
+
+.btn--danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn--ghost.btn--danger {
+    background: transparent;
+    color: var(--color-overdue);
+    padding: 0;
+}
+
+.btn--ghost.btn--danger:hover {
+    background: var(--color-overdue-bg);
+    color: var(--color-overdue);
+}
+
+.btn--secondary {
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-strong);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn--secondary:hover {
+    background: var(--color-border);
+}

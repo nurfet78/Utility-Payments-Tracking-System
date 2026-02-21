@@ -81,4 +81,47 @@ public class PaymentController {
             @PathVariable Long accountId) {
         return paymentService.getByAccountId(accountId);
     }
+
+    @PutMapping("/{paymentId}")
+    @Operation(
+            summary = "Редактировать платёж",
+            description = "Обновляет сумму и/или дату существующего платежа."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Платёж успешно обновлён"),
+            @ApiResponse(responseCode = "400",
+                    description = "Ошибка валидации",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404",
+                    description = "Лицевой счёт или платёж не найден",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public PaymentResponse update(
+            @Parameter(description = "ID лицевого счёта", example = "1", required = true)
+            @PathVariable Long accountId,
+            @Parameter(description = "ID платежа", example = "1", required = true)
+            @PathVariable Long paymentId,
+            @Valid @RequestBody PaymentCreateRequest request) {
+        return paymentService.update(accountId, paymentId, request);
+    }
+
+    @DeleteMapping("/{paymentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Удалить платёж",
+            description = "Удаляет платёж по ID."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Платёж удалён"),
+            @ApiResponse(responseCode = "404",
+                    description = "Лицевой счёт или платёж не найден",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public void delete(
+            @Parameter(description = "ID лицевого счёта", example = "1", required = true)
+            @PathVariable Long accountId,
+            @Parameter(description = "ID платежа", example = "1", required = true)
+            @PathVariable Long paymentId) {
+        paymentService.delete(accountId, paymentId);
+    }
 }

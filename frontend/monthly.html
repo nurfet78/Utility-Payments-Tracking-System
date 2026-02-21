@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчёт за месяц — Коммунальные платежи</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        /* Выбор месяца */
+        .month-picker {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .month-picker__input {
+            font-family: var(--font-data);
+            font-size: 1rem;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--color-border-strong);
+            border-radius: var(--radius-sm);
+            background: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+        }
+
+        .month-picker__input:focus {
+            border-color: var(--color-accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .month-picker__label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+        }
+
+        /* Карточки по услугам */
+        .service-cards {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .service-card__header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .service-card__info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .service-card__name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .service-card__account {
+            font-family: var(--font-data);
+            font-size: 0.82rem;
+            color: var(--color-text-muted);
+        }
+
+        .service-card__total {
+            font-family: var(--font-data);
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .service-card__total--zero {
+            color: var(--color-text-muted);
+        }
+
+        .service-card__total--paid {
+            color: var(--color-paid);
+        }
+
+        .sub-section {
+            margin-top: var(--space-md);
+        }
+
+        .sub-section__title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-sm);
+        }
+
+        /* Сводка месяца */
+        .month-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        @media (max-width: 600px) {
+            .month-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== Header ========== -->
+    <header class="header">
+        <a href="index.html" class="header__brand">
+            <div class="header__icon">КП</div>
+            <div>
+                <div class="header__title">Коммунальные платежи</div>
+                <div class="header__subtitle">Utility Payments Tracking</div>
+            </div>
+        </a>
+        <nav class="header__nav">
+            <a href="index.html">Панель</a>
+            <a href="monthly.html" class="active">По месяцам</a>
+        </nav>
+    </header>
+
+    <!-- ========== Main ========== -->
+    <main class="main">
+
+        <h1 class="page-title">Отчёт за месяц</h1>
+        <p class="page-desc">Платежи и показания по всем лицевым счетам за выбранный месяц.</p>
+
+        <!-- Выбор месяца -->
+        <div class="month-picker">
+            <span class="month-picker__label">Месяц:</span>
+            <input type="month" id="month-input" class="month-picker__input">
+        </div>
+
+        <!-- Сводка (карточки) -->
+        <div class="month-summary stagger" id="month-summary"></div>
+
+        <!-- Карточки по каждому счёту -->
+        <div class="service-cards" id="service-cards">
+            <!-- Заполняется динамически -->
+        </div>
+
+    </main>
+
+    <script type="module" src="js/monthly-page.js"></script>
+</body>
+</html>

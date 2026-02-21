@@ -5,10 +5,10 @@
  *   openapi-generator-cli generate -i http://localhost:8888/v3/api-docs -g typescript-fetch
  *
  * Классы API (сгенерированы из @Tag-аннотаций контроллеров):
- *   - УслугиApi               → GET /services
- *   - ЛицевыеСчетаApi         → POST /accounts, GET /accounts/{id}, GET /accounts/with-status
- *   - ПлатежиApi              → POST /accounts/{id}/payments, GET /accounts/{id}/payments
- *   - ПоказанияСчётчиковApi   → POST /accounts/{id}/readings, GET /accounts/{id}/readings
+ *   - UslugiApi                  → GET /services
+ *   - LitsevyeSchetaApi          → POST /accounts, GET /accounts/{id}, GET /accounts/with-status
+ *   - PlatezhiApi                → POST|PUT|DELETE /accounts/{id}/payments
+ *   - PokazaniyaSchyotchikovApi  → POST|PUT|DELETE /accounts/{id}/readings
  *
  * Методы API (сгенерированы из operationId):
  *   - getAll()           → GET /services
@@ -27,11 +27,11 @@
 // ------------------------------------------------------------------
 // Импорт из сгенерированного клиента (typescript-fetch, compiled)
 // ------------------------------------------------------------------
-import { Configuration }         from './generated-client/runtime.js';
-import { УслугиApi }             from './generated-client/apis/УслугиApi.js';
-import { ЛицевыеСчетаApi }       from './generated-client/apis/ЛицевыеСчетаApi.js';
-import { ПлатежиApi }            from './generated-client/apis/ПлатежиApi.js';
-import { ПоказанияСчётчиковApi } from './generated-client/apis/ПоказанияСчётчиковApi.js';
+import { Configuration }              from './generated-client/runtime.js';
+import { UslugiApi }                  from './generated-client/apis/UslugiApi.js';
+import { LitsevyeSchetaApi }          from './generated-client/apis/LitsevyeSchetaApi.js';
+import { PlatezhiApi }                from './generated-client/apis/PlatezhiApi.js';
+import { PokazaniyaSchyotchikovApi }  from './generated-client/apis/PokazaniyaSchyotchikovApi.js';
 
 // ------------------------------------------------------------------
 // Конфигурация — базовый URL бэкенда
@@ -43,10 +43,10 @@ const config = new Configuration({
 // ------------------------------------------------------------------
 // Экземпляры сгенерированных API-классов
 // ------------------------------------------------------------------
-const услугиApi             = new УслугиApi(config);
-const лицевыеСчетаApi       = new ЛицевыеСчетаApi(config);
-const платежиApi            = new ПлатежиApi(config);
-const показанияСчётчиковApi = new ПоказанияСчётчиковApi(config);
+const uslugiApi                = new UslugiApi(config);
+const litsevyeSchetaApi        = new LitsevyeSchetaApi(config);
+const platezhiApi              = new PlatezhiApi(config);
+const pokazaniyaSchyotchikovApi = new PokazaniyaSchyotchikovApi(config);
 
 // ------------------------------------------------------------------
 // Обработка ошибок: извлечение ErrorResponse из тела ответа
@@ -87,7 +87,7 @@ async function parseApiError(err) {
 /** Справочник услуг */
 export const servicesApi = {
     /** @returns {Promise<ServiceInfoDto[]>} */
-    getAll: () => услугиApi.getAll(),
+    getAll: () => uslugiApi.getAll(),
 };
 
 /** Лицевые счета */
@@ -98,7 +98,7 @@ export const accountsApi = {
      * @returns {Promise<AccountResponse>}
      */
     create: (data) =>
-        лицевыеСчетаApi.create({ accountCreateRequest: data }),
+        litsevyeSchetaApi.create({ accountCreateRequest: data }),
 
     /**
      * Получить лицевой счёт по ID.
@@ -106,14 +106,14 @@ export const accountsApi = {
      * @returns {Promise<AccountResponse>}
      */
     getById: (id) =>
-        лицевыеСчетаApi.getById({ id }),
+        litsevyeSchetaApi.getById({ id }),
 
     /**
      * Получить все счета со статусом оплаты за текущий месяц.
      * @returns {Promise<AccountWithStatusResponse[]>}
      */
     getWithStatus: () =>
-        лицевыеСчетаApi.getWithStatus(),
+        litsevyeSchetaApi.getWithStatus(),
 };
 
 /** Платежи */
@@ -125,7 +125,7 @@ export const paymentsApi = {
      * @returns {Promise<PaymentResponse>}
      */
     create: (accountId, data) =>
-        платежиApi.create1({ accountId, paymentCreateRequest: data }),
+        platezhiApi.create1({ accountId, paymentCreateRequest: data }),
 
     /**
      * Получить историю платежей по лицевому счёту.
@@ -133,7 +133,26 @@ export const paymentsApi = {
      * @returns {Promise<PaymentResponse[]>}
      */
     getByAccount: (accountId) =>
-        платежиApi.getByAccount({ accountId }),
+        platezhiApi.getByAccount({ accountId }),
+
+    /**
+     * Редактировать платёж.
+     * @param {number} accountId
+     * @param {number} paymentId
+     * @param {{ amount: number, paymentDate: string }} data
+     * @returns {Promise<PaymentResponse>}
+     */
+    update: (accountId, paymentId, data) =>
+        platezhiApi.update1({ accountId, paymentId, paymentCreateRequest: data }),
+
+    /**
+     * Удалить платёж.
+     * @param {number} accountId
+     * @param {number} paymentId
+     * @returns {Promise<void>}
+     */
+    delete: (accountId, paymentId) =>
+        platezhiApi.delete1({ accountId, paymentId }),
 };
 
 /** Показания счётчиков */
@@ -145,7 +164,7 @@ export const readingsApi = {
      * @returns {Promise<MeterReadingResponse>}
      */
     create: (accountId, data) =>
-        показанияСчётчиковApi.create2({ accountId, meterReadingCreateRequest: data }),
+        pokazaniyaSchyotchikovApi.create2({ accountId, meterReadingCreateRequest: data }),
 
     /**
      * Получить историю показаний по лицевому счёту.
@@ -153,7 +172,26 @@ export const readingsApi = {
      * @returns {Promise<MeterReadingResponse[]>}
      */
     getByAccount: (accountId) =>
-        показанияСчётчиковApi.getByAccount1({ accountId }),
+        pokazaniyaSchyotchikovApi.getByAccount1({ accountId }),
+
+    /**
+     * Редактировать показание.
+     * @param {number} accountId
+     * @param {number} readingId
+     * @param {{ value: string, readingDate: string }} data
+     * @returns {Promise<MeterReadingResponse>}
+     */
+    update: (accountId, readingId, data) =>
+        pokazaniyaSchyotchikovApi.update2({ accountId, readingId, meterReadingCreateRequest: data }),
+
+    /**
+     * Удалить показание.
+     * @param {number} accountId
+     * @param {number} readingId
+     * @returns {Promise<void>}
+     */
+    delete: (accountId, readingId) =>
+        pokazaniyaSchyotchikovApi.delete2({ accountId, readingId }),
 };
 
 export { parseApiError };

@@ -7,6 +7,7 @@ import org.nurfet.paymentstrackingsystem.domain.ServiceType;
 import org.nurfet.paymentstrackingsystem.dto.request.MeterReadingCreateRequest;
 import org.nurfet.paymentstrackingsystem.dto.response.MeterReadingResponse;
 import org.nurfet.paymentstrackingsystem.exception.BusinessException;
+import org.nurfet.paymentstrackingsystem.exception.ResourceNotFoundException;
 import org.nurfet.paymentstrackingsystem.mapper.MeterReadingMapper;
 import org.nurfet.paymentstrackingsystem.repository.MeterReadingRepository;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,41 @@ public class MeterReadingService {
                 .stream()
                 .map(meterReadingMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public MeterReadingResponse update(Long accountId, Long readingId, MeterReadingCreateRequest request) {
+        Account account = accountService.findEntityById(accountId);
+        ServiceType serviceType = account.getServiceType();
+
+        validateMeterSupport(serviceType);
+        validateReadingLength(serviceType, request.value());
+
+        MeterReading reading = meterReadingRepository.findById(readingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Показание с ID %d не найдено".formatted(readingId)));
+
+        if (!reading.getAccount().getId().equals(accountId)) {
+            throw new BusinessException("Показание #%d не принадлежит лицевому счёту #%d".formatted(readingId, accountId));
+        }
+
+        reading.setValue(request.value());
+        reading.setReadingDate(request.readingDate());
+        MeterReading saved = meterReadingRepository.save(reading);
+        return meterReadingMapper.toResponse(saved);
+    }
+
+    @Transactional
+    public void delete(Long accountId, Long readingId) {
+        accountService.findEntityById(accountId);
+
+        MeterReading reading = meterReadingRepository.findById(readingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Показание с ID %d не найдено".formatted(readingId)));
+
+        if (!reading.getAccount().getId().equals(accountId)) {
+            throw new BusinessException("Показание #%d не принадлежит лицевому счёту #%d".formatted(readingId, accountId));
+        }
+
+        meterReadingRepository.delete(reading);
     }
 
     private void validateMeterSupport(ServiceType serviceType) {

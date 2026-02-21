@@ -179,6 +179,7 @@ function paymentsTableOrEmpty() {
             el('th', { textContent: 'Дата' }),
             el('th', { textContent: 'Сумма' }),
             el('th', { textContent: 'ID' }),
+            el('th', { textContent: '', style: 'width: 80px' }),
         )
     );
 
@@ -189,6 +190,20 @@ function paymentsTableOrEmpty() {
                 el('td', { className: 'cell-date', textContent: formatDate(p.paymentDate) }),
                 el('td', { className: 'cell-amount', textContent: formatAmount(p.amount) }),
                 el('td', { className: 'cell-data', textContent: `#${p.id}` }),
+                el('td', { className: 'cell-actions' },
+                    el('button', {
+                        className: 'btn btn--icon btn--ghost',
+                        title: 'Редактировать',
+                        textContent: '✎',
+                        onClick: (e) => { e.stopPropagation(); openEditPaymentModal(p); },
+                    }),
+                    el('button', {
+                        className: 'btn btn--icon btn--ghost btn--danger',
+                        title: 'Удалить',
+                        textContent: '✕',
+                        onClick: (e) => { e.stopPropagation(); confirmDeletePayment(p); },
+                    }),
+                ),
             )
         );
     }
@@ -262,6 +277,7 @@ function readingsTableOrEmpty() {
             el('th', { textContent: 'Дата' }),
             el('th', { textContent: 'Показание' }),
             el('th', { textContent: 'ID' }),
+            el('th', { textContent: '', style: 'width: 80px' }),
         )
     );
 
@@ -272,6 +288,20 @@ function readingsTableOrEmpty() {
                 el('td', { className: 'cell-date', textContent: formatDate(r.readingDate) }),
                 el('td', { className: 'cell-data', textContent: r.value }),
                 el('td', { className: 'cell-data', textContent: `#${r.id}` }),
+                el('td', { className: 'cell-actions' },
+                    el('button', {
+                        className: 'btn btn--icon btn--ghost',
+                        title: 'Редактировать',
+                        textContent: '✎',
+                        onClick: (e) => { e.stopPropagation(); openEditReadingModal(r); },
+                    }),
+                    el('button', {
+                        className: 'btn btn--icon btn--ghost btn--danger',
+                        title: 'Удалить',
+                        textContent: '✕',
+                        onClick: (e) => { e.stopPropagation(); confirmDeleteReading(r); },
+                    }),
+                ),
             )
         );
     }
@@ -466,6 +496,226 @@ function highlightErrors(container, errors) {
 
         const errorEl = container.querySelector(`.form-error[data-field="${field}"]`);
         if (errorEl) errorEl.textContent = msg;
+    }
+}
+
+// ------------------------------------------------------------------
+// Редактирование платежа
+// ------------------------------------------------------------------
+function openEditPaymentModal(payment) {
+    const form = el('div', { className: 'form-grid' },
+        formGroup('amount', 'Сумма (₽)', 'number', {
+            placeholder: '1500.50',
+            step: '0.01',
+            min: '0.01',
+            value: String(payment.amount),
+            className: 'form-input form-input--mono',
+        }),
+        formGroup('paymentDate', 'Дата платежа', 'date', {
+            value: payment.paymentDate,
+            className: 'form-input',
+        }),
+        el('div', { className: 'form-actions' },
+            el('button', {
+                className: 'btn btn--primary',
+                textContent: 'Сохранить',
+                id: 'submit-edit-payment',
+                onClick: () => submitEditPayment(modal, payment.id),
+            }),
+        ),
+    );
+
+    const modal = openModal(`Редактировать платёж #${payment.id}`, form);
+}
+
+async function submitEditPayment(modal, paymentId) {
+    const modalBody = modal.overlay.querySelector('.modal__body');
+    clearFormErrors(modalBody);
+
+    const amount      = modalBody.querySelector('[name="amount"]').value;
+    const paymentDate = modalBody.querySelector('[name="paymentDate"]').value;
+
+    const { valid, errors } = validate({ amount, paymentDate }, {
+        amount:      rules.minExclusive(0, 'Сумма должна быть > 0'),
+        paymentDate: rules.required('Дата обязательна'),
+    });
+
+    if (!valid) { highlightErrors(modalBody, errors); return; }
+
+    const btn = modalBody.querySelector('#submit-edit-payment');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Сохранение...';
+
+    try {
+        await paymentsApi.update(accountId, paymentId, {
+            amount: Number(amount),
+            paymentDate,
+        });
+        modal.close();
+        await loadPayments();
+    } catch (err) {
+        const apiErr = await parseApiError(err);
+        showFormErrors(modalBody, apiErr);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Сохранить';
+    }
+}
+
+// ------------------------------------------------------------------
+// Удаление платежа
+// ------------------------------------------------------------------
+function confirmDeletePayment(payment) {
+    const body = el('div', {},
+        el('p', { textContent: `Удалить платёж #${payment.id} на сумму ${formatAmount(payment.amount)} от ${formatDate(payment.paymentDate)}?` }),
+        el('p', { style: 'color: var(--color-text-muted); font-size: 0.85rem; margin-top: var(--space-sm)', textContent: 'Это действие нельзя отменить.' }),
+        el('div', { className: 'form-actions', style: 'margin-top: var(--space-lg)' },
+            el('button', {
+                className: 'btn btn--danger',
+                textContent: 'Удалить',
+                id: 'confirm-delete',
+                onClick: () => executeDeletePayment(modal, payment.id),
+            }),
+            el('button', {
+                className: 'btn btn--secondary',
+                textContent: 'Отмена',
+                onClick: () => modal.close(),
+            }),
+        ),
+    );
+
+    const modal = openModal('Удаление платежа', body);
+}
+
+async function executeDeletePayment(modal, paymentId) {
+    const btn = modal.overlay.querySelector('#confirm-delete');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Удаление...';
+
+    try {
+        await paymentsApi.delete(accountId, paymentId);
+        modal.close();
+        await loadPayments();
+    } catch (err) {
+        const apiErr = await parseApiError(err);
+        const modalBody = modal.overlay.querySelector('.modal__body');
+        showAlert(modalBody, 'error', apiErr.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Удалить';
+    }
+}
+
+// ------------------------------------------------------------------
+// Редактирование показания
+// ------------------------------------------------------------------
+function openEditReadingModal(reading) {
+    const digits = serviceInfo?.meterDigits || 4;
+
+    const form = el('div', { className: 'form-grid' },
+        formGroup('value', `Показание (${digits} цифр)`, 'text', {
+            placeholder: '0'.repeat(digits),
+            maxLength: String(digits),
+            value: reading.value,
+            className: 'form-input form-input--mono',
+        },
+            el('span', { className: 'form-hint', textContent: `Ровно ${digits} цифр, только 0-9` })
+        ),
+        formGroup('readingDate', 'Дата показания', 'date', {
+            value: reading.readingDate,
+            className: 'form-input',
+        }),
+        el('div', { className: 'form-actions' },
+            el('button', {
+                className: 'btn btn--primary',
+                textContent: 'Сохранить',
+                id: 'submit-edit-reading',
+                onClick: () => submitEditReading(modal, reading.id),
+            }),
+        ),
+    );
+
+    const modal = openModal(`Редактировать показание #${reading.id}`, form);
+}
+
+async function submitEditReading(modal, readingId) {
+    const modalBody = modal.overlay.querySelector('.modal__body');
+    clearFormErrors(modalBody);
+
+    const value       = modalBody.querySelector('[name="value"]').value;
+    const readingDate = modalBody.querySelector('[name="readingDate"]').value;
+    const digits      = serviceInfo?.meterDigits || 4;
+
+    const { valid, errors } = validate({ value, readingDate }, {
+        value: (v) => {
+            if (!v) return 'Обязательное поле';
+            if (!/^[0-9]+$/.test(v)) return 'Допустимы только цифры';
+            if (v.length !== digits) return `Должно быть ровно ${digits} цифр`;
+            return null;
+        },
+        readingDate: rules.required('Дата обязательна'),
+    });
+
+    if (!valid) { highlightErrors(modalBody, errors); return; }
+
+    const btn = modalBody.querySelector('#submit-edit-reading');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Сохранение...';
+
+    try {
+        await readingsApi.update(accountId, readingId, { value, readingDate });
+        modal.close();
+        await loadReadings();
+    } catch (err) {
+        const apiErr = await parseApiError(err);
+        showFormErrors(modalBody, apiErr);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Сохранить';
+    }
+}
+
+// ------------------------------------------------------------------
+// Удаление показания
+// ------------------------------------------------------------------
+function confirmDeleteReading(reading) {
+    const body = el('div', {},
+        el('p', { textContent: `Удалить показание #${reading.id} (${reading.value}) от ${formatDate(reading.readingDate)}?` }),
+        el('p', { style: 'color: var(--color-text-muted); font-size: 0.85rem; margin-top: var(--space-sm)', textContent: 'Это действие нельзя отменить.' }),
+        el('div', { className: 'form-actions', style: 'margin-top: var(--space-lg)' },
+            el('button', {
+                className: 'btn btn--danger',
+                textContent: 'Удалить',
+                id: 'confirm-delete',
+                onClick: () => executeDeleteReading(modal, reading.id),
+            }),
+            el('button', {
+                className: 'btn btn--secondary',
+                textContent: 'Отмена',
+                onClick: () => modal.close(),
+            }),
+        ),
+    );
+
+    const modal = openModal('Удаление показания', body);
+}
+
+async function executeDeleteReading(modal, readingId) {
+    const btn = modal.overlay.querySelector('#confirm-delete');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Удаление...';
+
+    try {
+        await readingsApi.delete(accountId, readingId);
+        modal.close();
+        await loadReadings();
+    } catch (err) {
+        const apiErr = await parseApiError(err);
+        const modalBody = modal.overlay.querySelector('.modal__body');
+        showAlert(modalBody, 'error', apiErr.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Удалить';
     }
 }
 

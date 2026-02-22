@@ -37,7 +37,7 @@ import { PokazaniyaSchyotchikovApi }  from './generated-client/apis/PokazaniyaSc
 // Конфигурация — базовый URL бэкенда
 // ------------------------------------------------------------------
 const config = new Configuration({
-    basePath: window.API_BASE_URL || 'http://localhost:8888',
+    basePath: window.API_BASE_URL ?? 'http://localhost:8888',
 });
 
 // ------------------------------------------------------------------

@@ -1,4 +1,4 @@
-# Utility Payments Tracking System
+# Utility Payments Tracking Systed
 
 Система учёта коммунальных платежей — Spring Boot приложение для портфолио.
 

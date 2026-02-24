@@ -6,8 +6,8 @@ spring:
     name: PaymentsTrackingSystem
   datasource:
     url: jdbc:postgresql://localhost:5432/utilpay
-    username: postgres
-    password: admin
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -20,6 +20,11 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  # Авторизация (один пользователь, in-memory)
+  app:
+    security:
+      username: ${APP_SECURITY_USERNAME}
+      password: ${APP_SECURITY_PASSWORD}
 
 logging:
   level:

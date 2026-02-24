@@ -58,6 +58,7 @@ export class BaseAPI {
 
         const options = {
             method,
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept':       'application/json',
@@ -72,6 +73,11 @@ export class BaseAPI {
         const response = await fetch(url, options);
 
         if (!response.ok) {
+            // Сессия истекла — редирект на логин
+            if (response.status === 401 && !window.location.pathname.includes('login.html')) {
+                window.location.href = '/login.html';
+                return;
+            }
             // Выбрасываем ResponseError с оригинальным Response —
             // parseApiError() в api.js ожидает err.response.json()
             throw new ResponseError(response);

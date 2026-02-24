@@ -14,6 +14,7 @@ import {
     $, el, clear, showLoader, emptyState,
     serviceName, statusBadge, meterBadge, formatAmount, formatDate,
 } from './ui.js';
+import { requireAuth } from './auth.js';
 
 // ------------------------------------------------------------------
 // Состояние
@@ -29,6 +30,7 @@ let selectedMonth = null;
 // Инициализация
 // ------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!(await requireAuth())) return;
     initMonthPicker();
     await loadAllData();
 });

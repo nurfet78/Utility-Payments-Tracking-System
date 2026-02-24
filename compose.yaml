@@ -4,8 +4,8 @@ services:
     restart: always
     environment:
       - 'POSTGRES_DB=utilpay'
-      - 'POSTGRES_PASSWORD=admin'
-      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_USER=${DB_USERNAME}'
+      - 'POSTGRES_PASSWORD=${DB_PASSWORD}'
     ports:
       - '5432:5432'
     healthcheck:
@@ -20,13 +20,15 @@ services:
       dockerfile: docker/backend/Dockerfile
     restart: always
     environment:
-      SERVER_PORT:                   8080
-      SPRING_PROFILES_ACTIVE:        prod
-      SPRING_DATASOURCE_URL:         jdbc:postgresql://postgres:5432/utilpay
-      SPRING_DATASOURCE_USERNAME:    postgres
-      SPRING_DATASOURCE_PASSWORD:    admin
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/utilpay
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-      SPRING_FLYWAY_ENABLED:         "true"
+      SPRING_FLYWAY_ENABLED: "true"
+      APP_SECURITY_USERNAME: ${APP_SECURITY_USERNAME}
+      APP_SECURITY_PASSWORD: ${APP_SECURITY_PASSWORD}
     ports:
       - '8888:8080'
     depends_on:

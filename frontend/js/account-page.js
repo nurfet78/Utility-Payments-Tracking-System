@@ -16,6 +16,7 @@ import {
     serviceName, statusBadge, meterBadge, formatAmount, formatDate, todayISO,
     validate, rules,
 } from './ui.js';
+import { requireAuth } from './auth.js';
 
 // ------------------------------------------------------------------
 // Состояние страницы
@@ -722,4 +723,6 @@ async function executeDeleteReading(modal, readingId) {
 // ------------------------------------------------------------------
 // Автозапуск
 // ------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', initAccountPage);
+document.addEventListener('DOMContentLoaded', async () => {
+    if (await requireAuth()) initAccountPage();
+});

@@ -905,3 +905,19 @@ body {
 .btn--secondary:hover {
     background: var(--color-border);
 }
+
+/* === Logout button === */
+.logout-btn {
+    color: var(--color-header-text);
+    opacity: 0.6;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+}
+
+.logout-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+}

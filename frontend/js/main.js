@@ -14,6 +14,7 @@ import {
     openModal, showFormErrors, clearFormErrors,
     serviceName, statusBadge, validate, rules,
 } from './ui.js';
+import { requireAuth } from './auth.js';
 
 // ------------------------------------------------------------------
 // Состояние страницы
@@ -216,7 +217,6 @@ function openCreateAccountModal() {
 }
 
 async function submitCreateAccount(modal) {
-    console.log('submitCreateAccount вызвана');
     const modalBody = modal.overlay.querySelector('.modal__body');
     clearFormErrors(modalBody);
 
@@ -277,4 +277,6 @@ function navigateToAccount(accountId) {
 // ------------------------------------------------------------------
 // Автозапуск
 // ------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', initDashboard);
+document.addEventListener('DOMContentLoaded', async () => {
+    if (await requireAuth()) initDashboard();
+});
